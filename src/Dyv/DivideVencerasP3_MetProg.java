@@ -15,6 +15,7 @@ public class DivideVencerasP3_MetProg {
     }
 
     public static void apartado1() {
+        System.out.println("----Apartado 1----");
         char repetir;
 
         do {
@@ -30,14 +31,14 @@ public class DivideVencerasP3_MetProg {
                 auxVar = calcularAleatorios(i, vPisos);
 
                 for (int j = 0; j < vLads.length; j++) {
-                    System.out.println("Para K ladrillos y N pisos.\n\n" + vLads[j] + vPisos[i]);
+                    System.out.println("Para " + vLads[j]+" ladrillos y para " + vPisos[i]+" pisos");
 
                     try {
                         tInicio = obtenerTiempo(medida);
                         recursivo(vLads[j], 0, vPisos[i], new Ladrillo(auxVar));
                         tFinal = obtenerTiempo(medida);
                         long tTotal = tFinal - tInicio;
-                        System.out.println("El algoritmo ha tardado" + tTotal);
+                        System.out.println("El algoritmo ha tardado: " + tTotal);
                     } catch (StackOverflowError s) {
                         System.out.println("ERROR: La pila se ha desbordado -> " + s.getMessage());
                     }
@@ -49,7 +50,8 @@ public class DivideVencerasP3_MetProg {
     }
 
     public static void apartado2() {
-
+        System.out.println("---Apartado 2----");
+        System.out.println("Calcularemos cual es el número optimo de ladrillos para X pisos, obviamente utilizando su punto de ruptura");
         char c;
         do {
 
@@ -74,7 +76,7 @@ public class DivideVencerasP3_MetProg {
         if (nLadrillos == 1) {
 
             if (roto(lad, cotaInferior)) {
-                System.out.println("El ultimo ladrillo consiguio alcanzar su maxima resistencia en el piso: " + cotaInferior);
+                System.out.println("El ultimo ladrillo consiguio alcanzar su maxima resistencia en el piso " + cotaInferior);
             } else {
                 cotaInferior = cotaInferior + 1;
                 recursivo(nLadrillos, cotaInferior, cotaSuperior, lad);
