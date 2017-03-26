@@ -5,51 +5,52 @@ import utilidades.*;
 public class DivideVencerasP3_MetProg {
 
     public static void main(String[] args) {
-        menu();
-    }
 
-    public static void menu() {
+        System.out.println("Practica 3- Metodologia de la programación- Divide y venceras");
 
-        System.out.println("\n\n ~ ~ ~ | PRÁCTICA 3 - DIVIDE Y VENCERÁS | ~ ~ ~ \n");
-        
-        System.out.println("APARTADO 1");        
-        // Apartado 1, para N pisos y K ladrillos.
         apartado1();
-        
-        System.out.println("APARTADO 2");
-        // Apartado 2, para N pisos introducidos, calculas el K óptimo.
+
         apartado2();
-         
+
     }
 
     public static void apartado1() {
+        char repetir;
 
-        int[] vecPisos = {10, 100, 1000, 10000, 100000, 1000000};
-        int[] vecLads = {1, 2, 10, 100, 1000};
-        int aux;
-        double tIni, tFin;
-        
-        for (int p = 0; p < vecPisos.length; p++) {
-            aux = r(Math.random() * (vecPisos[p] + 1));
-            for (int l = 0; l < vecLads.length; l++) {
-                System.out.printf("Para %d ladrillos y %d pisos.\n\n", vecLads[l], vecPisos[p]);
-                try{
-                    tIni = tiempo();
-                    algoritmo(vecLads[l], 0, vecPisos[p], new Ladrillo(aux));
-                    tFin = tiempo();
-                    System.out.printf("\nHa tardado %.2f nanosegundos.", tFin-tIni);
-                }catch(StackOverflowError soe){
-                    System.out.println("ERROR: La pila se ha desbordado -> " + soe.toString());
+        do {
+            int[] vPisos = {10, 100, 1000, 10000, 100000, 1000000};
+            int[] vLads = {1, 2, 10, 100, 1000};
+            int auxVar;
+            long tInicio, tFinal;
+
+            char medida = leer.caracter("¿En qué unidad de medida quieres calcular:\n M=milisegundos\n N=nanosegundos ");
+
+            for (int i = 0; i < vPisos.length; i++) {
+
+                auxVar = calcularAleatorios(i, vPisos);
+
+                for (int j = 0; j < vLads.length; j++) {
+                    System.out.println("Para K ladrillos y N pisos.\n\n" + vLads[j] + vPisos[i]);
+
+                    try {
+                        tInicio = obtenerTiempo(medida);
+                        recursivo(vLads[j], 0, vPisos[i], new Ladrillo(auxVar));
+                        tFinal = obtenerTiempo(medida);
+                        long tTotal = tFinal - tInicio;
+                        System.out.println("El algoritmo ha tardado" + tTotal);
+                    } catch (StackOverflowError s) {
+                        System.out.println("ERROR: La pila se ha desbordado -> " + s.getMessage());
+                    }
+                    System.out.println("\n\n");
                 }
-                System.out.println("\n\n");
             }
-        }
+            repetir = Character.toUpperCase(leer.caracter("¿Quieres repetir la prueba con otra unidad de tiempo? (S=si/N=no)"));
+        } while (repetir == 'S');
     }
 
     public static void apartado2() {
 
-        char x;
-
+        char c;
         do {
 
             int npisos = leer.entero("Indique el número de pisos:");
@@ -60,75 +61,75 @@ public class DivideVencerasP3_MetProg {
             }
 
             System.out.printf("El numero óptimo de ladrillos para %d pisos es %d. ",
-                    npisos, log(npisos));
-            
-            x = leer.caracter("¿Quiere repetir esta prueba? Si/No");
+                    npisos, logaritmo(npisos));
 
-        } while (x == 'S' || x == 's');
+            c = leer.caracter("¿Quiere repetir esta prueba? Si/No");
+
+        } while (c == 'S' || c == 's');
 
     }
 
-    public static void algoritmo(int nLads, int li, int ls, Ladrillo l){
+    public static void recursivo(int nLadrillos, int cotaInferior, int cotaSuperior, Ladrillo lad) {
 
-        if (nLads == 1) {
+        if (nLadrillos == 1) {
 
-            if (seRompe(l, li)) {
-
-                System.out.println("La resistencia del ladrillo es: " + li);
-
+            if (roto(lad, cotaInferior)) {
+                System.out.println("El ultimo ladrillo consiguio alcanzar su maxima resistencia en el piso: " + cotaInferior);
             } else {
-                
-                li = li + 1;
-                algoritmo(nLads, li, ls, l);                
-
+                cotaInferior = cotaInferior + 1;
+                recursivo(nLadrillos, cotaInferior, cotaSuperior, lad);
             }
 
         } else {
-            
-            int piso = calcularPiso(li, ls);
-            
-            if (seRompe(l, piso)) {
 
-                nLads--;
+            int piso = calculoPiso(cotaInferior, cotaSuperior);
 
-                if(piso == li || piso == ls){
-                    
-                    System.out.println("La resistencia del ladrillo es: " + piso);
-                
-                }else{
-                
-                    algoritmo(nLads, li, piso, l);
-                    
+            if (roto(lad, piso)) {
+                nLadrillos = nLadrillos - 1;
+                if (piso == cotaInferior || piso == cotaSuperior) {
+                    System.out.println("El ladrillo consiguio alcanzar su maxima resistencia en el piso " + piso);
+                } else {
+                    recursivo(nLadrillos, cotaInferior, piso, lad);
                 }
-                
             } else {
-
-                algoritmo(nLads, piso, ls, l);
+                recursivo(nLadrillos, piso, cotaSuperior, lad);
 
             }
-        }       
+        }
     }
 
-    public static boolean seRompe(Ladrillo lad, int piso) {
-        return lad.getAlturaMax() <= piso;
+    public static boolean roto(Ladrillo l, int piso) {
+        return l.getAlturaMax() <= piso;
     }
 
-    public static int r(double n) {
-        return (int) Math.floor(n);
+    public static int calculoPiso(int ci, int cs) {
+        int altura = ci + ((cs - ci) / 2);
+        if (altura == ci) {
+            return cs;
+        } else {
+            return altura;
+        }
     }
 
-    public static int calcularPiso(int li, int ls) {
-        int h = li + ((ls - li) / 2);
-        if (h == li) return ls;
-        else return h;
-    }
-    
-    public static double tiempo(){
-        return System.nanoTime();
-    }
-    
-    public static int log(int n){
-        return (int) Math.ceil((Math.log(n)/Math.log(2)));
+    public static int logaritmo(int n) {
+        return (int) Math.ceil((Math.log(n) / Math.log(2)));
     }
 
+    public static int calcularAleatorios(int i, int vPisos[]) {
+        return (int) Math.floor((Math.random() * (vPisos[i] + 1)));
+    }
+
+    public static long obtenerTiempo(char medida) {
+        medida = Character.toUpperCase(medida);
+        long time = 0;
+        switch (medida) {
+            case 'M':
+                time = System.currentTimeMillis();
+                break;
+            case 'N':
+                time = System.nanoTime();
+                break;
+        }
+        return time;
+    }
 }

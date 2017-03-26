@@ -2,24 +2,24 @@ package Dyv;
 
 public class Ladrillo {
     
-    private int alturaMax;
+    private int resistencia;
     private boolean roto;
 
     public Ladrillo() {
-        this.alturaMax = 0;
+        this.resistencia = 0;
         this.roto = false;
     }
     
-    public Ladrillo(int alturaMax){
-        this.alturaMax = alturaMax;
+    public Ladrillo(int altura){
+        this.resistencia = altura;
     }
 
     public int getAlturaMax() {
-        return alturaMax;
+        return resistencia;
     }
 
     public void setAlturaMax(int alturaMax) {
-        this.alturaMax = alturaMax;
+        this.resistencia = alturaMax;
     }
 
     public boolean isRoto() {
